@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Світ у фактах</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --card: #1e1e1e;
+      --accent: #e8c547;
+      --accent2: #e85d47;
+      --text: #f0ede6;
+      --muted: #888;
+      --border: #2a2a2a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    header {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 60% 50% at 20% 50%, rgba(232,197,71,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 80% 30%, rgba(232,93,71,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .globe-bg {
+      position: absolute;
+      font-size: 40vw;
+      opacity: 0.03;
+      user-select: none;
+      animation: spin 60s linear infinite;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      padding: 0.3em 1em;
+      display: inline-block;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 10vw, 8rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    h1 span { color: var(--accent); display: block; }
+
+    .subtitle {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      max-width: 420px;
+      line-height: 1.7;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(8px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    .stat {
+      flex: 1; min-width: 150px;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 0.65rem; color: var(--muted);
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-header {
+      display: flex; align-items: center;
+      gap: 1rem; margin-bottom: 3rem;
+    }
+
+    .section-num {
+      font-size: 0.65rem; color: var(--accent);
+      letter-spacing: 0.2em;
+      background: rgba(232,197,71,0.1);
+      padding: 0.3em 0.8em;
+      border: 1px solid rgba(232,197,71,0.3);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 700;
+    }
+
+    .line { flex: 1; height: 1px; background: var(--border); }
+
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .fact-card {
+      background: var(--card);
+      padding: 2rem;
+      transition: background 0.3s;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fact-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .fact-card:hover { background: #222; }
+    .fact-card:hover::after { transform: scaleX(1); }
+
+    .fact-emoji { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .fact-country {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem;
+    }
+    .fact-text { font-size: 0.9rem; line-height: 1.7; color: #ccc; }
+    .fact-text strong { color: var(--text); }
+
+    .fact-card.highlight {
+      background: linear-gradient(135deg, #1a1800, #1e1e1e);
+      border-left: 3px solid var(--accent);
+    }
+    .fact-card.highlight::after { background: var(--accent2); }
+
+    .weird-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .weird-grid { grid-template-columns: 1fr; }
+      .facts-grid { grid-template-columns: 1fr; }
+    }
+
+    .weird-card {
+      background: var(--card);
+      padding: 2.5rem;
+      display: flex; gap: 1.5rem;
+      align-items: flex-start;
+      transition: background 0.3s;
+    }
+    .weird-card:hover { background: #222; }
+
+    .weird-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem; font-weight: 900;
+      color: var(--border); line-height: 1;
+      flex-shrink: 0; transition: color 0.3s;
+    }
+    .weird-card:hover .weird-num { color: var(--accent); }
+
+    .weird-country {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem;
+    }
+    .weird-text { font-size: 0.88rem; line-height: 1.7; color: #bbb; }
+
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; color: var(--accent); margin-bottom: 0.5rem;
+    }
+    .footer-sub { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="globe-bg">🌍</div>
+  <div class="tag">Проєкт з інформатики · 11 клас</div>
+  <h1>Світ <span>у фактах</span></h1>
+  <p class="subtitle">195 країн. Мільярди людей. Нескінченна кількість дивовижних фактів — і ось найцікавіші з них.</p>
+  <div class="scroll-hint">↓ гортай вниз</div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">195</div>
+    <div class="stat-label">Країн у світі</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">8B+</div>
+    <div class="stat-label">Людей на Землі</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">7100+</div>
+    <div class="stat-label">Мов у світі</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">44</div>
+    <div class="stat-label">Країни в Європі</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <h2 class="section-title">Географія та природа</h2>
+    <div class="line"></div>
+  </div>
+  <div class="facts-grid">
+    <div class="fact-card highlight">
+      <span class="fact-emoji">🇨🇦</span>
+      <div class="fact-country">Канада</div>
+      <p class="fact-text">У Канаді <strong>більше озер, ніж у всіх інших країнах світу разом узятих</strong> — близько 3 мільйонів. Також тут найдовша берегова лінія — 200 000 км.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇻🇦</span>
+      <div class="fact-country">Ватикан</div>
+      <p class="fact-text">Ватикан — <strong>найменша держава у світі</strong>, лише 0,44 км². При цьому має власну армію, банк, радіостанцію і навіть тюрму.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇧🇴</span>
+      <div class="fact-country">Болівія</div>
+      <p class="fact-text">Болівія — одна з небагатьох країн із <strong>двома столицями</strong>: Сукре (конституційна) і Ла-Пас (адміністративна). Ла-Пас — найвисокогірніша столиця у світі.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇳🇴</span>
+      <div class="fact-country">Норвегія</div>
+      <p class="fact-text">У Норвегії влітку сонце <strong>не заходить за горизонт кілька місяців поспіль</strong> — це явище називається полярним днем. У деяких містах сонце не сідає з травня по липень.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇦🇺</span>
+      <div class="fact-country">Австралія</div>
+      <p class="fact-text">Австралія — єдина країна, що займає <strong>цілий континент</strong>. При цьому 80% населення живе на узбережжі, а більша частина внутрішніх територій — пустеля.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇸🇦</span>
+      <div class="fact-country">Саудівська Аравія</div>
+      <p class="fact-text">У Саудівській Аравії <strong>немає жодної річки</strong>. Вся питна вода надходить з опріснювальних заводів або підземних джерел.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <h2 class="section-title">Культура та традиції</h2>
+    <div class="line"></div>
+  </div>
+  <div class="facts-grid">
+    <div class="fact-card">
+      <span class="fact-emoji">🇯🇵</span>
+      <div class="fact-country">Японія</div>
+      <p class="fact-text">У Японії прийнято <strong>знімати взуття перед входом до будинку</strong>. У школах діти самі прибирають класи без прибиральників — це частина виховання.</p>
+    </div>
+    <div class="fact-card highlight">
+      <span class="fact-emoji">🇮🇳</span>
+      <div class="fact-country">Індія</div>
+      <p class="fact-text">Індія — <strong>найбільш населена країна світу</strong> з 2023 року. Тут розмовляють понад 22 офіційними мовами, а за кількістю фільмів випереджає Голлівуд.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇧🇷</span>
+      <div class="fact-country">Бразилія</div>
+      <p class="fact-text">Бразилія — <strong>єдина португаломовна країна</strong> в Південній Америці. Карнавал у Ріо — найбільший фестиваль у світі, що приваблює понад 2 млн людей на день.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇮🇸</span>
+      <div class="fact-country">Ісландія</div>
+      <p class="fact-text">В Ісландії <strong>немає комарів</strong> — зовсім. Клімат острова не дозволяє їм існувати. Також тут майже немає злочинності: тюрми часто порожні.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇨🇳</span>
+      <div class="fact-country">Китай</div>
+      <p class="fact-text">Китай — <strong>єдина країна з одним часовим поясом</strong> при такій величезній території. Офіційно вся країна живе за пекінським часом, хоча географічно охоплює 5 поясів.</p>
+    </div>
+    <div class="fact-card">
+      <span class="fact-emoji">🇫🇷</span>
+      <div class="fact-country">Франція</div>
+      <p class="fact-text">Франція — <strong>найбільш відвідувана країна світу</strong>: понад 90 мільйонів туристів щороку. Французи споживають більше сиру на душу населення, ніж будь-який інший народ.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <h2 class="section-title">Дивовижні факти</h2>
+    <div class="line"></div>
+  </div>
+  <div class="weird-grid">
+    <div class="weird-card">
+      <div class="weird-num">01</div>
+      <div class="weird-body">
+        <div class="weird-country">🇺🇸 США</div>
+        <p class="weird-text">У США більше публічних бібліотек, ніж McDonald's. При цьому країна — єдина розвинена держава без системи <strong>загального медичного страхування</strong>.</p>
+      </div>
+    </div>
+    <div class="weird-card">
+      <div class="weird-num">02</div>
+      <div class="weird-body">
+        <div class="weird-country">🇸🇬 Сінгапур</div>
+        <p class="weird-text">За викидання сміття тут штрафують на сотні доларів, а жувальна гумка <strong>продається лише в аптеках</strong>. Один із найчистіших міст-держав у світі.</p>
+      </div>
+    </div>
+    <div class="weird-card">
+      <div class="weird-num">03</div>
+      <div class="weird-body">
+        <div class="weird-country">🇳🇵 Непал</div>
+        <p class="weird-text">Непал — єдина країна у світі з <strong>прапором непрямокутної форми</strong>. Прапор складається з двох трикутників і символізує гори Гімалаїв.</p>
+      </div>
+    </div>
+    <div class="weird-card">
+      <div class="weird-num">04</div>
+      <div class="weird-body">
+        <div class="weird-country">🇰🇷 Південна Корея</div>
+        <p class="weird-text">Тут діє <strong>особлива система підрахунку віку</strong>: новонароджений вважається вже 1 року. Також країна має один із найшвидших інтернетів у світі.</p>
+      </div>
+    </div>
+    <div class="weird-card">
+      <div class="weird-num">05</div>
+      <div class="weird-body">
+        <div class="weird-country">🇳🇿 Нова Зеландія</div>
+        <p class="weird-text">У Новій Зеландії <strong>овець у 6 разів більше, ніж людей</strong>. Країна була першою у світі, де жінки отримали право голосу — ще у 1893 році.</p>
+      </div>
+    </div>
+    <div class="weird-card">
+      <div class="weird-num">06</div>
+      <div class="weird-body">
+        <div class="weird-country">🇲🇨 Монако</div>
+        <p class="weird-text">Монако — <strong>найгустіше населена країна світу</strong>: понад 26 000 людей на км². При цьому це друга найменша країна після Ватикану.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">🌍 Світ у фактах</div>
+  <p class="footer-sub">Проєкт з інформатики · 11 клас · HTML & CSS</p>
+</footer>
+
+</body>
+</html>
